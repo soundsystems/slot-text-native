@@ -1,0 +1,25 @@
+default:
+  image: node:22
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
+stages:
+  - check
+
+check:
+  stage: check
+  before_script:
+    - corepack enable
+    - pnpm config set store-dir .pnpm-store
+    - curl -fsSL https://bun.sh/install | bash
+    - export PATH="$HOME/.bun/bin:$PATH"
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm lint
+    - pnpm typecheck
+    - pnpm test
+    - pnpm build

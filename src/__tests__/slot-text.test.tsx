@@ -6,7 +6,7 @@ import {
   type ReactTestInstance,
   type ReactTestRenderer,
 } from "react-test-renderer";
-import { SlotText } from "../slot-text";
+import { __resetActiveRollsForTesting, SlotText } from "../slot-text";
 import type { SlotTextController } from "../types";
 
 const GLYPH = { height: 20, width: 10 };
@@ -319,6 +319,43 @@ describe("SlotText", () => {
     const [row] = renderer.root.findAll((node) => hostType(node) === "View");
 
     expect(row?.props.style).not.toContainEqual({ direction: "ltr" });
+  });
+
+  it("declines rolls past the global concurrency cap and swaps instantly", () => {
+    jest.useFakeTimers();
+    __resetActiveRollsForTesting();
+    const count = 18;
+    const refs = Array.from({ length: count }, () =>
+      createRef<SlotTextController>()
+    );
+    const labels = (
+      <>
+        {refs.map((ref, index) => (
+          <SlotText controllerRef={ref} key={index} text="a" warmupChars="b" />
+        ))}
+      </>
+    );
+    const renderer = render(labels);
+    measure(renderer);
+
+    act(() => {
+      for (const ref of refs) {
+        ref.current?.set("b");
+      }
+    });
+
+    // 16 labels roll; the two past the cap settle straight to the new text.
+    expect(slotsOf(renderer)).toHaveLength(16);
+    expect(plainTextOf(renderer)).toBe("bb");
+    for (const ref of refs) {
+      expect(ref.current?.value).toBe("b");
+    }
+
+    // Let the rolling labels settle so the counter drains for later suites.
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+    expect(slotsOf(renderer)).toHaveLength(0);
   });
 
   it("recreates its controller during StrictMode effect replay", () => {

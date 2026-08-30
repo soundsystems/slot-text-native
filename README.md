@@ -2,6 +2,16 @@
 
 **Text that rolls like a slot machine — for React Native and Expo.**
 
+> ### A port of [slot-text](https://www.npmjs.com/package/slot-text) by Daniel Belyi
+>
+> The animation design, the option names, the defaults and the feel are all
+> his — this is his library rebuilt for React Native on Reanimated, because the
+> original is a browser-only DOM utility. Not affiliated with or endorsed by
+> the original author. MIT, like the original, and his copyright notice ships
+> in [LICENSE](./LICENSE).
+>
+> **Building for the web? Use [slot-text](https://www.npmjs.com/package/slot-text) instead.**
+
 [![npm](https://img.shields.io/npm/v/slot-text-native)](https://www.npmjs.com/package/slot-text-native)
 [![bundle](https://img.shields.io/bundlephobia/minzip/slot-text-native)](https://bundlephobia.com/package/slot-text-native)
 [![license](https://img.shields.io/npm/l/slot-text-native)](./LICENSE)
@@ -40,9 +50,6 @@ just as cleanly as `999` → `1,000`.
   each other, and `flash()` handles the whole Copy → Copied → Copy cycle.
 - **Accessible by default.** Reduce Motion collapses rolls to instant swaps
   with no behaviour change; mid-roll cells are hidden from screen readers.
-
-A React Native port of [slot-text](https://www.npmjs.com/package/slot-text) by
-Daniel Belyi. Same options, same defaults, same feel.
 
 ## Install
 
@@ -164,6 +171,26 @@ two strings share nothing, so the whole line rolls as one.
 A custom `easing` runs on the UI thread, so a plain function must be a worklet.
 Anything from Reanimated's `Easing` already is.
 
+### Presets
+
+Curated option sets for common jobs — spread one and override what you need:
+
+```tsx
+import { presets, SlotText } from "slot-text-native";
+
+<SlotText text={sortLabel} options={presets.snappy} />
+<SlotText text={status} options={{ ...presets.calm, direction: "up" }} />
+```
+
+| Preset | Feel | For |
+|---|---|---|
+| `snappy` | Quick, tight | Interface labels — sort controls, tabs, button text |
+| `calm` | Barely-there | Dense or serious surfaces where motion should whisper |
+| `odometer` | End-aligned digits | Pre-formatted numbers `SlotCounter` can't express |
+| `jackpot` | Slow chromatic wave | Celebratory reveals — totals, wins |
+
+No preset at all gives the library default: a springy 300 ms roll.
+
 ## Props
 
 | Prop | Default | |
@@ -220,6 +247,11 @@ exact width of the glyph arriving in it, eased so a wide outgoing glyph is
 never cropped by a narrowing cell. Text is segmented with `Intl.Segmenter`, so
 ZWJ emoji (👨‍👩‍👧) and combining marks stay in one cell.
 
+Rolls are also capped globally: when a screen-wide data change retargets more
+than 16 labels in one commit — a virtualized list re-sorting, say — the surplus
+labels swap instantly instead of piling a measure-and-mount storm onto the JS
+thread. The visible handful still roll; the rest just update.
+
 ## Font support
 
 Works well with monospace fonts (every cell identical) and proportional
@@ -255,5 +287,13 @@ Same options and defaults, with four deliberate divergences:
 
 ## Credits
 
-MIT. A port of [slot-text](https://www.npmjs.com/package/slot-text) by Daniel
-Belyi (MIT), whose animation design this follows closely.
+The animation this implements is Daniel Belyi's, from
+[slot-text](https://www.npmjs.com/package/slot-text) — the clipped per-character
+cell, the chasing entry, the springy settle, the per-letter wobble, the option
+names and their defaults. This package ports that design to React Native and
+adds the platform's missing pieces: glyph measurement, a UI-thread clock,
+end-alignment and a counter preset.
+
+Both are MIT. The original copyright notice ships in [LICENSE](./LICENSE).
+
+If this is useful to you, star [the original](https://www.npmjs.com/package/slot-text) too.

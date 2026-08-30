@@ -14,9 +14,13 @@
     "odometer",
     "ticker"
   ],
+  "homepage": "https://gitlab.com/soundsystems/slot-text-native",
+  "bugs": {
+    "url": "https://gitlab.com/soundsystems/slot-text-native/-/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soundsystems/slot-text-native.git"
+    "url": "git+https://gitlab.com/soundsystems/slot-text-native.git"
   },
   "license": "MIT",
   "sideEffects": false,

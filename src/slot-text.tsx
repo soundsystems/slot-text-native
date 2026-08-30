@@ -53,6 +53,25 @@ const MIN_WIDTH_CHANGE = 0.5;
 const DEGREES_PER_BOUNCE = 5;
 const EMPTY_SIZES: ReadonlyMap<string, GlyphSize> = new Map();
 
+// Cap on simultaneous rolls across every mounted SlotText. A screen-wide data
+// change (re-sorting a virtualized list, say) can retarget dozens of labels in
+// one commit; past this many in-flight rolls the surplus declines the
+// animation (the machine publishes the new text instantly), so a mass update
+// costs a handful of visible rolls instead of a measure-and-mount storm.
+const MAX_ACTIVE_ROLLS = 16;
+let activeRollCount = 0;
+
+/**
+ * Test-only: clear the global roll counter. Mounted labels from earlier tests
+ * never settle under fake timers, so suites that exercise the cap start from
+ * zero explicitly. Not part of the public API.
+ *
+ * @internal
+ */
+export function __resetActiveRollsForTesting() {
+  activeRollCount = 0;
+}
+
 interface GlyphSize {
   height: number;
   width: number;
@@ -167,12 +186,22 @@ export const SlotText = forwardRef<ComponentRef<typeof View>, SlotTextProps>(
     const latestTextRef = useRef(text);
     const machineRef = useRef<SlotTextMachine | null>(null);
 
-    // The delegate closes over nothing that changes between renders, so it is
-    // built once. That is what lets the machine live in a ref without any
-    // render-phase writes to keep it current.
-    const delegate = useMemo<SlotTextMachineDelegate>(
-      () => ({
+    // The delegate closes over nothing that changes between renders (refs and
+    // the module-level roll counter only), so it is built once. That is what
+    // lets the machine live in a ref without any render-phase writes to keep
+    // it current.
+    const holdsActiveRollRef = useRef(false);
+    const delegate = useMemo<SlotTextMachineDelegate>(() => {
+      const releaseActiveRoll = () => {
+        if (holdsActiveRollRef.current) {
+          holdsActiveRollRef.current = false;
+          activeRollCount = Math.max(0, activeRollCount - 1);
+        }
+      };
+
+      return {
         settle(nextText) {
+          releaseActiveRoll();
           setTransition((current) => ({
             key: current.key,
             plan: buildTransitionPlan(nextText, nextText, current.plan.options),
@@ -180,6 +209,20 @@ export const SlotText = forwardRef<ComponentRef<typeof View>, SlotTextProps>(
           }));
         },
         startTransition(_fromText, _toText, plan) {
+          releaseActiveRoll();
+          const animates = plan.changed && plan.total > 0;
+
+          // Over the global cap, decline: the machine settles immediately and
+          // publishes the target without this label joining the pile-up.
+          if (animates && activeRollCount >= MAX_ACTIVE_ROLLS) {
+            return 0;
+          }
+
+          if (animates) {
+            holdsActiveRollRef.current = true;
+            activeRollCount += 1;
+          }
+
           sequenceRef.current += 1;
           setTransition({
             key: sequenceRef.current,
@@ -188,9 +231,8 @@ export const SlotText = forwardRef<ComponentRef<typeof View>, SlotTextProps>(
           });
           return plan.total;
         },
-      }),
-      []
-    );
+      };
+    }, []);
 
     const controller = useMemo<SlotTextController>(
       () => ({
