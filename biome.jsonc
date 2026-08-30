@@ -8,7 +8,8 @@
       "*.jsonc",
       "*.md",
       "!**/node_modules",
-      "!lib"
+      "!lib",
+      "!docs"
     ]
   },
   "linter": {

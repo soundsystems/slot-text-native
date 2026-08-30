@@ -21,12 +21,16 @@ glyph enters from one side while the old one leaves the other, chasing it by a
 stagger step, with a springy overshoot so each letter lands with a little
 bounce. Counters, prices, live stats, sort labels, Copy → Copied buttons.
 
-Works with **any string**, not just digits — `Recently added` → `THC %` rolls
-just as cleanly as `999` → `1,000`.
+Works with **any string**, not just digits — `Recently added` → `Top rated`
+rolls just as cleanly as `999` → `1,000`.
 
-<!-- Add a demo here before publishing: docs/demo.gif (a counter ticking and a
-     Copy → Copied button, ~3 seconds, under 2 MB). It is the single highest
-     leverage thing in this README. -->
+<p align="center">
+  <img
+    alt="A balance counter rolling to a new value, a sort label rolling with a chromatic sweep, and a Copy button flashing Copied"
+    src="https://gitlab.com/sound-systems/slot-text-native/-/raw/main/docs/demo.gif"
+    width="640"
+  >
+</p>
 
 ```tsx
 <SlotCounter value={balance} prefix="$" />
@@ -227,7 +231,7 @@ pass. The initial text is measured at mount — pass whatever else the label wil
 cycle through and the first roll starts on the same frame as every later one:
 
 ```tsx
-<SlotText text={sortLabel} warmupChars="THC %Terps Lowest priceRecently added" />
+<SlotText text={sortLabel} warmupChars="Recently addedLowest priceTop rated" />
 ```
 
 ## How it works

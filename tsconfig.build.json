@@ -9,5 +9,5 @@
     "types": [],
     "rootDir": "src"
   },
-  "exclude": ["lib", "node_modules", "src/__tests__"]
+  "exclude": ["lib", "node_modules", "src/__tests__", "docs"]
 }
