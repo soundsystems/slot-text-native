@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/biome/core"],
+  "files": {
+    "includes": [
+      "src/**",
+      "*.json",
+      "*.jsonc",
+      "*.md",
+      "!**/node_modules",
+      "!lib"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        // Misfires on `#destroyed`, whose only mutation is in destroy(), and on
+        // the nullable measure-flush timer handle. Both guards are load-bearing
+        // and covered by tests ("ignores every command after destroy").
+        "noUnnecessaryConditions": "off"
+      }
+    }
+  }
+}
