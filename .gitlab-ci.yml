@@ -1,5 +1,5 @@
 default:
-  image: node:22
+  image: node:24
   cache:
     key:
       files:
@@ -17,7 +17,7 @@ check:
     - pnpm config set store-dir .pnpm-store
     - curl -fsSL https://bun.sh/install | bash
     - export PATH="$HOME/.bun/bin:$PATH"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --filter . --filter '{example}'
   script:
     - pnpm lint
     - pnpm typecheck

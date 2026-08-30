@@ -199,7 +199,7 @@ describe("SlotText", () => {
     expect(flat.overflow).toBe("hidden");
   });
 
-  it("leaves the clip box flush with the glyph when nothing tilts", () => {
+  it("still relieves the clip when nothing tilts, for ink overflow alone", () => {
     jest.useFakeTimers();
     const controllerRef = createRef<SlotTextController>();
     const renderer = render(
@@ -218,8 +218,12 @@ describe("SlotText", () => {
 
     const style = slotsOf(renderer)[0]?.props.style;
     const flat = Object.assign({}, ...style.flat(Number.POSITIVE_INFINITY));
-    expect(flat.marginHorizontal).toBe(-0);
-    expect(flat.width).toBe(GLYPH.width);
+    // No tilt to clear, but a glyph still paints past its advance width, so
+    // the cell keeps a margin of relief. Layout advance is unchanged either way.
+    expect(flat.marginHorizontal).toBeLessThan(0);
+    expect(flat.width + flat.marginHorizontal * 2).toBe(GLYPH.width);
+    // ...and it is tighter than a tilting roll needs.
+    expect(Math.abs(flat.marginHorizontal)).toBeLessThan(3);
   });
 
   it("settles instantly when the OS asks for reduced motion", () => {

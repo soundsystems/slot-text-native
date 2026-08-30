@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "slot-text-native",
+    "slug": "slot-text-native-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.soundsystems.slottextnative.example"
+    },
+    "android": { "package": "dev.soundsystems.slottextnative.example" }
+  }
+}

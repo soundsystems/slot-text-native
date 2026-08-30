@@ -234,6 +234,19 @@ cycle through and the first roll starts on the same frame as every later one:
 <SlotText text={sortLabel} warmupChars="Recently addedLowest priceTop rated" />
 ```
 
+## Example app
+
+An interactive playground lives in [`example/`](./example) — every option as a
+live control, the counter, all four presets, and the flash button:
+
+```bash
+pnpm install
+pnpm --filter slot-text-native-example ios
+```
+
+It consumes the library straight from `src/`, so edits hot-reload without a
+rebuild.
+
 ## How it works
 
 One Reanimated shared value drives the whole label: a clock animated linearly

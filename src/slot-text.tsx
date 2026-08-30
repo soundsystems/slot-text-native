@@ -51,6 +51,11 @@ const DEFAULT_TEXT_COLOR = "#111827";
 const WIDTH_EASING = Easing.bezier(0.2, 0, 0, 1).factory();
 const MIN_WIDTH_CHANGE = 0.5;
 const DEGREES_PER_BOUNCE = 5;
+// Glyphs paint outside their advance width: round letters overshoot, bold
+// faces spread, italics lean. Measured cells are exactly one advance wide, so
+// without a margin of clip relief the mask shaves the outer edge of a glyph
+// mid-roll — most visibly on the first letter of a word.
+const INK_BLEED_RATIO = 0.08;
 const EMPTY_SIZES: ReadonlyMap<string, GlyphSize> = new Map();
 
 // Cap on simultaneous rolls across every mounted SlotText. A screen-wide data
@@ -407,13 +412,12 @@ export const SlotText = forwardRef<ComponentRef<typeof View>, SlotTextProps>(
     // tilt's horizontal reach and pulling it back with a negative margin
     // restores that room without moving the glyph or the row.
     const overhang = useMemo(() => {
-      const maxTilt = planOptions.bounce * DEGREES_PER_BOUNCE;
-      if (maxTilt <= 0 || glyphHeight <= 0) {
+      if (glyphHeight <= 0) {
         return 0;
       }
-      return (
-        Math.ceil((glyphHeight * Math.sin((maxTilt * Math.PI) / 180)) / 2) + 1
-      );
+      const maxTilt = planOptions.bounce * DEGREES_PER_BOUNCE;
+      const tiltReach = (glyphHeight * Math.sin((maxTilt * Math.PI) / 180)) / 2;
+      return Math.ceil(tiltReach + glyphHeight * INK_BLEED_RATIO);
     }, [glyphHeight, planOptions.bounce]);
 
     const animations = useMemo<(GlyphAnimation | null)[]>(() => {
@@ -507,10 +511,17 @@ export const SlotText = forwardRef<ComponentRef<typeof View>, SlotTextProps>(
     const rowStyle = useMemo(
       () => [
         styles.row,
+        // The row clips too, so a cell's outward relief would be shaved off at
+        // the row's own edge — visible as a cropped first and last letter.
+        // Padding widens the row's clip box by the same amount the cells pull
+        // outward, and the negative margin cancels it for outer layout.
+        overhang > 0
+          ? { marginHorizontal: -overhang, paddingHorizontal: overhang }
+          : null,
         textDirection === "auto" ? null : { direction: textDirection },
         style,
       ],
-      [style, textDirection]
+      [overhang, style, textDirection]
     );
 
     const showSlots = rolling || (restLayout === "slots" && measured);

@@ -4,6 +4,8 @@
   "files": {
     "includes": [
       "src/**",
+      "example/src/**",
+      "example/*.js",
       "*.json",
       "*.jsonc",
       "*.md",
