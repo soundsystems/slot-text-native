@@ -27,7 +27,7 @@ rolls just as cleanly as `999` → `1,000`.
 <p align="center">
   <img
     alt="A balance counter rolling to a new value, a sort label rolling with a chromatic sweep, and a Copy button flashing Copied"
-    src="https://gitlab.com/sound-systems/slot-text-native/-/raw/main/docs/demo.gif"
+    src="https://gitlab.com/soundsystems/slot-text-native/-/raw/main/docs/demo.gif"
     width="640"
   >
 </p>
