@@ -63,6 +63,17 @@ npx expo install slot-text-native react-native-reanimated
 
 Reanimated 4+ with its babel plugin configured. That's the whole setup.
 
+Peer range is deliberately wide (`react-native >=0.78`, `reanimated >=4.0`),
+but the library, its tests and the example app are all developed and verified
+against one stack — the one Expo SDK 57 pins:
+
+| | |
+|---|---|
+| react-native | 0.86.3 |
+| react-native-reanimated | 4.5.1 |
+| react-native-worklets | 0.10.1 |
+| react | 19.2.3 |
+
 ## Counters
 
 `SlotCounter` is `SlotText` with counter-shaped defaults, so the ones column
