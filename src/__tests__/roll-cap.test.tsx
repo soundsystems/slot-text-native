@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, jest } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import type { ReactElement } from "react";
 import {
   act,
@@ -6,7 +6,7 @@ import {
   type ReactTestInstance,
   type ReactTestRenderer,
 } from "react-test-renderer";
-import { SlotText } from "../slot-text";
+import { __resetActiveRollsForTesting, SlotText } from "../slot-text";
 
 const MAX_ACTIVE_ROLLS = 16;
 
@@ -16,6 +16,10 @@ const hostType = (node: ReactTestInstance) => node.type as unknown as string;
 // unmounted between tests — unmount destroys the machine, which settles and
 // releases the label's slot.
 const mounted: ReactTestRenderer[] = [];
+
+beforeEach(() => {
+  __resetActiveRollsForTesting();
+});
 
 const render = (element: ReactElement) => {
   let renderer: ReactTestRenderer | undefined;

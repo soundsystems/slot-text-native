@@ -7,14 +7,15 @@
 > The animation design, the option names, the defaults and the feel are all
 > his — this is his library rebuilt for React Native on Reanimated, because the
 > original is a browser-only DOM utility. Not affiliated with or endorsed by
-> the original author. MIT, like the original, and his copyright notice ships
-> in [LICENSE](./LICENSE).
+> the original author. This port is Apache-2.0 licensed; the original remains
+> MIT licensed, with its copyright and permission notice preserved in
+> [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
 >
 > **Building for the web? Use [slot-text](https://www.npmjs.com/package/slot-text) instead.**
 
 [![npm](https://img.shields.io/npm/v/slot-text-native)](https://www.npmjs.com/package/slot-text-native)
 [![bundle](https://img.shields.io/bundlephobia/minzip/slot-text-native)](https://bundlephobia.com/package/slot-text-native)
-[![license](https://img.shields.io/npm/l/slot-text-native)](./LICENSE)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
 
 Every character sits in its own clipped cell and changes by sliding. The new
 glyph enters from one side while the old one leaves the other, chasing it by a
@@ -58,7 +59,7 @@ rolls just as cleanly as `999` → `1,000`.
 ## Install
 
 ```bash
-npx expo install slot-text-native react-native-reanimated
+pnpx expo install slot-text-native react-native-reanimated
 ```
 
 Reanimated 4+ with its babel plugin configured. That's the whole setup.
@@ -322,6 +323,12 @@ names and their defaults. This package ports that design to React Native and
 adds the platform's missing pieces: glyph measurement, a UI-thread clock,
 end-alignment and a counter preset.
 
-Both are MIT. The original copyright notice ships in [LICENSE](./LICENSE).
+This port is licensed under [Apache 2.0](./LICENSE), with attribution in
+[NOTICE](./NOTICE). The original `slot-text` remains MIT licensed; its complete
+copyright and permission notice ships in
+[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+
+The public GitHub mirror is [soundsystems/slot-text-native](https://github.com/soundsystems/slot-text-native).
+Development and merge requests remain on [GitLab](https://gitlab.com/soundsystems/slot-text-native).
 
 If this is useful to you, star [the original](https://www.npmjs.com/package/slot-text) too.
